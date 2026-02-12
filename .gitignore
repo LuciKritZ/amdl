@@ -71,3 +71,8 @@ apple_music_token.json
 
 .tmp/
 .cursorrules
+
+# Wrapper: ignore extracted release content (stub Dockerfile in amdl-wrapper/ is committed for CI)
+amdl-wrapper/rootfs/
+amdl-wrapper/wrapper
+amdl-wrapper/*.zip
