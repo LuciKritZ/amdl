@@ -53,8 +53,16 @@ def _resolve_song(song_id: str) -> Track:
 
 def _resolve_album(album_id: str) -> list[Track]:
     data = _fetch(f"/albums/{album_id}")["data"][0]
+    attrs = data["attributes"]
+    album_artist = attrs.get("artistName", "Unknown Artist")
     tracks = data["relationships"]["tracks"]["data"]
-    return _normalize(tracks)
+    disc_total = attrs.get("numberOfDiscs")
+    if disc_total is None and tracks:
+        disc_total = max(int(t["attributes"].get("discNumber", 1)) for t in tracks)
+    if disc_total is None:
+        disc_total = 1
+    compilation = attrs.get("isCompilation", False)
+    return _normalize(tracks, album_artist=album_artist, disc_total=disc_total, compilation=compilation)
 
 
 def _resolve_playlist(playlist_id: str) -> list[Track]:
@@ -63,21 +71,35 @@ def _resolve_playlist(playlist_id: str) -> list[Track]:
     return _normalize(tracks)
 
 
-def _normalize(items: list[dict]) -> list[Track]:
-    tracks = [_track(t) for t in items]
+def _normalize(
+    items: list[dict],
+    album_artist: str | None = None,
+    disc_total: int = 1,
+    compilation: bool = False,
+) -> list[Track]:
+    tracks = [_track(t, album_artist=album_artist, disc_total=disc_total, compilation=compilation) for t in items]
     return sorted(tracks, key=lambda t: (t.disc_number, t.track_number))
 
 
-def _track(song: dict) -> Track:
+def _track(
+    song: dict,
+    album_artist: str | None = None,
+    disc_total: int = 1,
+    compilation: bool = False,
+) -> Track:
     attrs = song["attributes"]
+    artist = attrs["artistName"]
 
     return Track(
         song_id=song["id"],
         song_name=attrs["name"],
-        artist=attrs["artistName"],
+        artist=artist,
+        album_artist=album_artist if album_artist is not None else artist,
         album=attrs.get("albumName") or attrs["name"],
         disc_number=int(attrs.get("discNumber", 1)),
+        disc_total=disc_total,
         track_number=int(attrs.get("trackNumber", 0)),
+        compilation=compilation,
         url=attrs["url"],
     )
 

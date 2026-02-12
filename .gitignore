@@ -68,3 +68,6 @@ Thumbs.db
 # Token cache files (if stored locally, though yours are in ~/.cache/amdl/)
 developer_token.json
 apple_music_token.json
+
+.tmp/
+.cursorrules
