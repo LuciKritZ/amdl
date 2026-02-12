@@ -42,7 +42,7 @@ From the **repo root** (if amdl is a subdirectory):
 docker compose -f amdl/docker-compose.yml --project-directory amdl up -d
 ```
 
-**Downloader config:** Place your `config.yaml` at `amdl/config-downloader/config.yaml`, or set `AMDL_DOWNLOADER_CONFIG_PATH` to its path. You can copy from `apple-music-downloader/config.yaml` or symlink.  
+**Downloader config:** Place your config at `amdl/configs/amdl-downloader-config.yaml`, or set `AMDL_DOWNLOADER_CONFIG_PATH` to its path.  
 **Library output:** Set `AMDL_LIBRARY_ROOT` (default when unset: `./library` inside amdl).
 
 ## Running
@@ -73,7 +73,7 @@ PYTHONPATH=. uv run pytest tests/ -v
   - `ingest.py` - Main ingestion logic
   - `docker-compose.yml` - Docker Compose configuration (wrapper + downloader services)
   - `amdl-wrapper/` - Wrapper build context (stub for CI; real content from Module 3 install script)
-  - `config-downloader/` - Optional: place `config.yaml` here for the downloader container
+  - `configs/` - Downloader config (e.g. `amdl-downloader-config.yaml`)
   - `tests/` - Test suite
 
 ## Credits

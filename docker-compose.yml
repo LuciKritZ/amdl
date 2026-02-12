@@ -3,8 +3,9 @@
 #   docker compose -f docker-compose.yml --project-directory . up -d
 # Or from repo root: docker compose -f amdl/docker-compose.yml --project-directory amdl up -d
 #
-# Downloader config: place config.yaml at ./config-downloader/config.yaml (or set
-# AMDL_DOWNLOADER_CONFIG_PATH). Library output: set AMDL_LIBRARY_ROOT or use ./library.
+# Downloader config: ./configs/amdl-downloader-config.yaml (or set AMDL_DOWNLOADER_CONFIG_PATH).
+# Library output: set AMDL_LIBRARY_ROOT or use ./library.
+# Wrapper ports (defaults 10021/20021/30021 to avoid conflict with other wrapper). Override: AMDL_WRAPPER_PORT_1, _2, _3.
 
 services:
   wrapper:
@@ -14,20 +15,20 @@ services:
     image: amdl-wrapper
     container_name: amdl-wrapper
     ports:
-      - "10020:10020"
-      - "20020:20020"
-      - "30020:30020"
+      - "${AMDL_WRAPPER_PORT_1:-10021}:10020"
+      - "${AMDL_WRAPPER_PORT_2:-20021}:20020"
+      - "${AMDL_WRAPPER_PORT_3:-30021}:30020"
     volumes:
       - wrapper-data:/app/rootfs/data
     restart: unless-stopped
 
   amdl:
     image: ghcr.io/zhaarey/apple-music-downloader
-    container_name: apple-music-downloader
+    container_name: amdl-downloader
     network_mode: host
     volumes:
       - "${AMDL_LIBRARY_ROOT:-./library}:/downloads"
-      - "${AMDL_DOWNLOADER_CONFIG_PATH:-./config-downloader/config.yaml}:/app/config.yaml"
+      - "${AMDL_DOWNLOADER_CONFIG_PATH:-./configs/amdl-downloader-config.yaml}:/app/config.yaml"
     entrypoint: ["/bin/sh", "-c"]
     command: ["sleep infinity"]
     stdin_open: true
