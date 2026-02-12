@@ -91,6 +91,17 @@ STOREFRONT: Final[str] = _get_str(
 )
 
 # Docker Configuration
+AMDL_ROOT: Final[Path] = _get_path(
+    "AMDL_ROOT",
+    Path(__file__).parent,
+)
+
+# Compose file path (relative to AMDL_ROOT)
+COMPOSE_FILE: Final[Path] = AMDL_ROOT / "docker-compose.yml"
+
+# Compose project directory (same as AMDL_ROOT)
+COMPOSE_PROJECT_DIR: Final[Path] = AMDL_ROOT
+
 DOCKER_SERVICE: Final[str] = _get_str(
     "AMDL_DOCKER_SERVICE",
     "amdl",

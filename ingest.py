@@ -1,7 +1,7 @@
 import sys
 import subprocess
 
-from config import DOCKER_SERVICE
+from config import COMPOSE_FILE, COMPOSE_PROJECT_DIR, DOCKER_SERVICE
 from decision.paths import canonical_path
 from resolvers.apple_music import resolve
 
@@ -24,6 +24,10 @@ def _download(song_url: str) -> None:
         [
             "docker",
             "compose",
+            "-f",
+            str(COMPOSE_FILE),
+            "--project-directory",
+            str(COMPOSE_PROJECT_DIR),
             "exec",
             DOCKER_SERVICE,
             "apple-music-dl",
